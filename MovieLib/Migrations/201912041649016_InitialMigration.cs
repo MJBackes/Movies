@@ -14,7 +14,7 @@ namespace MovieLib.Migrations
                         Id = c.Int(nullable: false, identity: true),
                         FirstName = c.String(),
                         MiddleName = c.String(),
-                        LastNme = c.String(),
+                        LastName = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
