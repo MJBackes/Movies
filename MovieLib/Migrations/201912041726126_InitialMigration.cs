@@ -12,9 +12,11 @@ namespace MovieLib.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
+                        Prefix = c.String(),
                         FirstName = c.String(),
                         MiddleName = c.String(),
                         LastName = c.String(),
+                        Suffix = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             

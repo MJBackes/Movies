@@ -18,13 +18,13 @@ namespace MovieLib.Controllers
         //GET api/values
         public IHttpActionResult Get()
         {
-            return Ok(db.Movies.Where(m => m != null));
+            return Ok(db.Movies.Include("Director").Where(m => m != null));
         }
 
         // GET api/values/5
         public IHttpActionResult Get(int id)
         {
-            Movie movie = db.Movies.Find(id);
+            Movie movie = db.Movies.Include("Director").FirstOrDefault(m => m.Id == id);
             return Ok(movie);
         }
 

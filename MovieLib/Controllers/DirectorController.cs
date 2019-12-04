@@ -24,7 +24,7 @@ namespace MovieLib.Controllers
         // GET: api/Director/5
         public IHttpActionResult Get(int id)
         {
-            return Ok(db.Movies.Where(m => m.DirectorId == id));
+            return Ok(db.Movies.Include("Director").Where(m => m.DirectorId == id));
         }
 
         // POST: api/Director
