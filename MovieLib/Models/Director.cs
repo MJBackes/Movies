@@ -9,8 +9,9 @@ namespace MovieLib.Models
     public class Director
     {
         [Key]
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string FirstName { get; set; }
+        public string MiddleName { get; set; }
         public string LastNme { get; set; }
     }
 }
