@@ -3,6 +3,30 @@
 	font-size: 25px;
 
 }
+#contentTable{
+	margin: 25%;
+}
+th{
+	padding: 15px;
+
+}
+td{
+	padding: 15px;
+	width: auto;
+	text-align: center;
+	overflow-wrap: ;
+}
 body{
 	background-color: darkcyan;
+}
+a{
+	color: aliceblue;
+}
+@media screen and (max-width: 995px){
+	.form-inline{
+		display: block;
+	}
+	.form-inline label{
+		justify-content: flex-start;
+	}
 }
