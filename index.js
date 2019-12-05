@@ -1,36 +1,9 @@
 $(document).ready(function(){
 	$("#contentBody").html("");
 	$(document).on("click", "#movieBtn", buildMovieTable);
-	$("#directorBtn").on("click",function(){
-		$("#contentBody").html("<table id='contentTable' class='table-striped'><tbody id=tableBody><tr id='tableHead'></tr></tbody></table>");
-		$.get({
-			type: "GET",
-			url: "https://localhost:44344/api/director",
-			dataType: "json",
-			success: function(directors){
-				$("#tableHead").append("<th>Name</th><th>Edit</th>");
-				for(let i = 0; i < directors.length; i++){
-					let directorName = "";
-					if(directors[i].Prefix != null || directors[i].Prefix != undefined)
-						directorName += (directors[i].Prefix + " ");
-					if(directors[i].FirstName != null || directors[i].FirstName != undefined)
-						directorName += (directors[i].FirstName+ " ");
-					if(directors[i].MiddleName != null || directors[i].MiddleName != undefined)
-						directorName += (directors[i].MiddleName+ " ");
-					if(directors[i].LastName != null || directors[i].LastName != undefined)
-						directorName += (directors[i].LastName+ " ");
-					if(directors[i].Suffix != null || directors[i].Suffix != undefined)
-						directorName += (directors[i].Suffix+ " ");
-					$("#tableBody").append("<tr><td>" + directorName + " </td><td><a class='editDirBtn' id='editDirBtn" + directors[i].Id + "' href='#'>Edit</a></td></tr>");
-				}
-				$("#tableBody").append("<tr><td></td><td><a id='createDirBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
-			},
-			error: function(xhr, options, error){
-				console.log(error);
-			}
-		})
+	$(document).on("click", "#directorBtn", buildDirectorTable);
 	});
-});
+
 	$(document).on("click","#createMovieBtn",function(){
 		$("#contentBody").html("<form style='width: 100%'>" +
 									"<div class='form-group'>" +
@@ -109,6 +82,95 @@ $(document).ready(function(){
 			}
 		})
 	});
+	$(document).on("click", "#createDirBtn", function(){
+				$("#contentBody").html("<form style='width: 100%'>" +
+									"<h4>Director:</h4>" +
+									"<div class='form-group'>" +
+										"<label for='Prefix'>Prefix</label>" +
+										"<input type='text' class='form-control' placeholder='Prefix' id='pre' style='width: 70px'>" +
+									"</div>" + 
+									"<div class='form-inline'>" +
+										"<label for='FirstName'>First Name</label>" +
+										"<input type='text' class='form-control' placeholder='First Name' id='first'>" +
+										"<label for='Middle Name'>Middle Name</label>" +
+										"<input type='text' class='form-control' placeholder='Middle Name' id='middle'>" +
+										"<label for='Last Name'>Last Name</label>" +
+										"<input type='text' class='form-control' placeholder='Last Name' id='last'>" +
+									"</div>" +
+									"<div class='form-group'>" +
+										"<label for='Suffix'>Suffix</label>" +
+										"<input type='text' class='form-control' placeholder='Suffix' id='suffix' style='width: 70px'>" +
+									"</div>" + 
+									"<button id='submitNewDirector' class='btn btn-primary'>Submit</button>" +
+								"</form>");
+	});
+	$(document).on("click", ".editDirBtn", function(event){
+		let id = "";
+		id += event.target.id;
+		id = parseInt(id.split('n')[1]);
+		$.ajax({
+			type:"GET",
+			url: "https://localhost:44344/api/director/" + id,
+			dataType: "json",
+			success: function(director){
+										$("#contentBody").html("<form style='width: 100%'>" +
+									"<h4 id='heading'>Director #" + id + ":</h4>" +
+									"<div class='form-group'>" +
+										"<label for='Prefix'>Prefix</label>" +
+										"<input type='text' class='form-control' value='" + director.Prefix + "' id='pre' style='width: 70px'>" +
+									"</div>" + 
+									"<div class='form-inline'>" +
+										"<label for='FirstName'>First Name</label>" +
+										"<input type='text' class='form-control' value='" + director.FirstName + "' id='first'>" +
+										"<label for='Middle Name'>Middle Name</label>" +
+										"<input type='text' class='form-control' value='" + director.MiddleName + "' id='middle'>" +
+										"<label for='Last Name'>Last Name</label>" +
+										"<input type='text' class='form-control' value='" + director.LastName + "' id='last'>" +
+									"</div>" +
+									"<div class='form-group'>" +
+										"<label for='Suffix'>Suffix</label>" +
+										"<input type='text' class='form-control' value='" + director.Suffix + "' id='suffix' style='width: 70px'>" +
+									"</div>" + 
+									"<button id='submitEditedDirector' class='btn btn-primary'>Submit</button>" +
+								"</form>");
+			}
+		});
+	});
+	$(document).on("click", "#submitNewDirector", function(){
+		var director = {Prefix: $("#pre").val(),
+						FirstName: $("#first").val(),
+						MiddleName: $("#middle").val(),
+						LastName: $("#last").val(),
+						Suffix: $("#suffix").val()
+					};
+		$.ajax({
+			type: "POST",
+			url: "https://localhost:44344/api/director",
+			data: director,
+			dataType: "json",
+			success:function(){
+				console.log("successful post");
+				buildDirectorTable();
+			}
+		});
+	});
+	$(document).on("click", "#submitEditedDirector", function(){
+		var director = {Prefix: $("#pre").val(),
+						FirstName: $("#first").val(),
+						MiddleName: $("#middle").val(),
+						LastName: $("#last").val(),
+						Suffix: $("#suffix").val()
+					};
+		$.ajax({
+			type:"PUT",
+			url: "https://localhost:44344/api/director/" + $("#heading").html().split('#')[1].split(':')[0],
+			data: director,
+			success: function(){
+				console.log("successful put");
+				buildDirectorTable();
+			}
+		});
+	});
 	$(document).on("click", "#submitNewMovie", function(){
 		var movie = {Title: $("#title").val(),
 					Genre: $("#genre").val(),
@@ -184,3 +246,32 @@ function buildMovieTable(){
 			}
 		});
 }
+function buildDirectorTable(){
+		$("#contentBody").html("<table id='contentTable' class='table-striped'><tbody id=tableBody><tr id='tableHead'></tr></tbody></table>");
+		$.get({
+			type: "GET",
+			url: "https://localhost:44344/api/director",
+			dataType: "json",
+			success: function(directors){
+				$("#tableHead").append("<th>Name</th><th>Edit</th>");
+				for(let i = 0; i < directors.length; i++){
+					let directorName = "";
+					if(directors[i].Prefix != null || directors[i].Prefix != undefined)
+						directorName += (directors[i].Prefix + " ");
+					if(directors[i].FirstName != null || directors[i].FirstName != undefined)
+						directorName += (directors[i].FirstName+ " ");
+					if(directors[i].MiddleName != null || directors[i].MiddleName != undefined)
+						directorName += (directors[i].MiddleName+ " ");
+					if(directors[i].LastName != null || directors[i].LastName != undefined)
+						directorName += (directors[i].LastName+ " ");
+					if(directors[i].Suffix != null || directors[i].Suffix != undefined)
+						directorName += (directors[i].Suffix+ " ");
+					$("#tableBody").append("<tr><td>" + directorName + " </td><td><a class='editDirBtn' id='editDirBtn" + directors[i].Id + "' href='#'>Edit</a></td></tr>");
+				}
+				$("#tableBody").append("<tr><td></td><td><a id='createDirBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
+			},
+			error: function(xhr, options, error){
+				console.log(error);
+			}
+		});
+	}
