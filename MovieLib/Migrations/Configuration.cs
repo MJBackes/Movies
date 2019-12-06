@@ -21,17 +21,17 @@ namespace MovieLib.Migrations
 
             //Seed Data -- put this in the Seed method in configuration.cs
             context.Directors.AddOrUpdate(
-                new Models.Director { FirstName = "Martin", LastName = "Scorsese" },
-                new Models.Director { FirstName = "Christopher", LastName = "Nolan" },
-                new Models.Director { FirstName = "David", MiddleName = "Gordan", LastName = "Green" },
-                new Models.Director { FirstName = "John", LastName = "McTiernan" }
+                new Models.Director { FirstName = "Martin", LastName = "Scorsese", Image = PlaceholderString.PlaceholderStr },
+                new Models.Director { FirstName = "Christopher", LastName = "Nolan", Image = PlaceholderString.PlaceholderStr },
+                new Models.Director { FirstName = "David", MiddleName = "Gordan", LastName = "Green", Image = PlaceholderString.PlaceholderStr },
+                new Models.Director { FirstName = "John", LastName = "McTiernan", Image = PlaceholderString.PlaceholderStr }
                 );
             context.Movies.AddOrUpdate(
-                new Models.Movie { Title = "The Departed", Genre = "Drama", DirectorId = 1 },
-                new Models.Movie { Title = "The Dark Knight", Genre = "Drama", DirectorId = 2 },
-                new Models.Movie { Title = "Inception", Genre = "Drama", DirectorId = 2 },
-                new Models.Movie { Title = "Pineapple Express", Genre = "Comedy", DirectorId = 3 },
-                new Models.Movie { Title = "Die Hard", Genre = "Action", DirectorId = 4 }
+                new Models.Movie { Title = "The Departed", Genre = "Drama", Runtime = 151, DirectorId = 1 ,Image = PlaceholderString.PlaceholderStr },
+                new Models.Movie { Title = "The Dark Knight", Genre = "Drama", Runtime = 152, DirectorId = 2, Image = PlaceholderString.PlaceholderStr },
+                new Models.Movie { Title = "Inception", Genre = "Drama", Runtime = 148, DirectorId = 2, Image = PlaceholderString.PlaceholderStr },
+                new Models.Movie { Title = "Pineapple Express", Genre = "Comedy", Runtime = 117, DirectorId = 3, Image = PlaceholderString.PlaceholderStr },
+                new Models.Movie { Title = "Die Hard", Genre = "Action", Runtime = 132, DirectorId = 4, Image = PlaceholderString.PlaceholderStr }
             );
         }
     }

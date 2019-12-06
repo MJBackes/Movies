@@ -14,8 +14,10 @@ namespace MovieLib.Models
         public string Title { get; set; }
         public string Genre { get; set; }
         public int Runtime { get; set; }
+        public string Image { get; set; }
         [ForeignKey("Director")]
         public int DirectorId { get; set; }
         public Director Director { get; set; }
+
     }
 }

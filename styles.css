@@ -3,24 +3,25 @@
 	font-size: 25px;
 
 }
-#contentTable{
-	margin: 25%;
-}
 th{
 	padding: 15px;
-
+	text-align: center;
 }
 td{
 	padding: 15px;
 	width: auto;
 	text-align: center;
-	overflow-wrap: ;
+	width: 18%;
+}
+tr{
+	width: 100%;
+	color: aliceblue;
 }
 body{
 	background-color: darkcyan;
 }
 a{
-	color: aliceblue;
+	color: #ff944d;
 }
 @media screen and (max-width: 995px){
 	.form-inline{
@@ -29,4 +30,13 @@ a{
 	.form-inline label{
 		justify-content: flex-start;
 	}
+}
+#contentBody{
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	max-width: none;
+}
+#contentTable{
+	width: 100%;	
 }

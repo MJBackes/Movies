@@ -3,7 +3,7 @@ namespace MovieLib.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialMigration : DbMigration
+    public partial class SecondMigration : DbMigration
     {
         public override void Up()
         {
@@ -17,6 +17,7 @@ namespace MovieLib.Migrations
                         MiddleName = c.String(),
                         LastName = c.String(),
                         Suffix = c.String(),
+                        Image = c.String(),
                     })
                 .PrimaryKey(t => t.Id);
             
@@ -28,6 +29,7 @@ namespace MovieLib.Migrations
                         Title = c.String(),
                         Genre = c.String(),
                         Runtime = c.Int(nullable: false),
+                        Image = c.String(),
                         DirectorId = c.Int(nullable: false),
                     })
                 .PrimaryKey(t => t.Id)

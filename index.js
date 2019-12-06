@@ -2,10 +2,16 @@ $(document).ready(function(){
 	$("#contentBody").html("");
 	$(document).on("click", "#movieBtn", buildMovieTable);
 	$(document).on("click", "#directorBtn", buildDirectorTable);
+	$(document).on("click", "#searchBtn", buildSearchFields);
 	});
 
 	$(document).on("click","#createMovieBtn",function(){
 		$("#contentBody").html("<form style='width: 100%'>" +
+									"<div class='form-group'>" +
+										"<canvas hidden id='canvas' width='300' height='450'></canvas>" + 
+										"<img id='imgView' width='300' height='450'>" + 
+										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
+									"<div>" +
 									"<div class='form-group'>" +
 										"<label for='Title'>Title</label>" +
 										"<input type='text' class='form-control' placeholder='Title' id='title'>" +
@@ -38,6 +44,29 @@ $(document).ready(function(){
 									"<button id='submitNewMovie' class='btn btn-primary'>Submit</button>" +
 								"</form>");
 	});
+		$(document).on("click",".createMovieForDirBtn",function(event){
+			id = event.target.id.split('n')[1];
+		$("#contentBody").html("<form style='width: 100%'>" + 
+									"<div class='form-group'>" +
+										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
+										"<img id='imgView' width='300' height='450'>" + 
+										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
+									"<div>" +
+									"<div class='form-group'>" +
+										"<label for='Title'>Title</label>" +
+										"<input type='text' class='form-control' placeholder='Title' id='title'>" +
+									"</div>" +
+									"<div class='form-group'>" +
+										"<label for='Genre'>Genre</label>" +
+										"<input type='text' class='form-control' placeholder='Genre' id='genre'>" +
+									"</div>" +
+									"<div class='form-group'>" +
+										"<label for='Runtime'>Runtime</label>" +
+										"<input type='number' class='form-control' placeholder='Runtime' id='runtime'>" +
+									"</div>" +
+									"<button id='submitNewMovieForDirBtn" + id + "' class=' submitNewMovieForDirBtn btn btn-primary'>Submit</button>" +
+								"</form>");
+	});
 	$(document).on("click",".editMovieBtn",function(event){
 		let id = "";
 		id += event.target.id;
@@ -48,6 +77,11 @@ $(document).ready(function(){
 			dataType: "json",
 			success:function(movie){
 						$("#contentBody").html("<form style='width: 100%'>" +
+									"<div class='form-group'>" +
+										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
+										"<img id='imgView' width='300' height='450' src='data:image/png;base64" + movie.Image + "'>" +
+										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
+									"<div>" +
 									"<div class='form-group'>" +
 										"<label id='titleLabel' for='Title'>Title (ID#: " + id + ")</label>" +
 										"<input type='text' class='form-control' value='" + movie.Title + "' id='title'>" +
@@ -86,6 +120,11 @@ $(document).ready(function(){
 				$("#contentBody").html("<form style='width: 100%'>" +
 									"<h4>Director:</h4>" +
 									"<div class='form-group'>" +
+										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
+										"<img id='imgView' width='300' height='450'>" + 
+										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
+									"<div>" +
+									"<div class='form-group'>" +
 										"<label for='Prefix'>Prefix</label>" +
 										"<input type='text' class='form-control' placeholder='Prefix' id='pre' style='width: 70px'>" +
 									"</div>" + 
@@ -116,6 +155,11 @@ $(document).ready(function(){
 										$("#contentBody").html("<form style='width: 100%'>" +
 									"<h4 id='heading'>Director #" + id + ":</h4>" +
 									"<div class='form-group'>" +
+										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
+										"<img id='imgView' width='300' height='450' src='data:image/png;base64" + director.Image + "'>" + 
+										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
+									"<div>" +
+									"<div class='form-group'>" +
 										"<label for='Prefix'>Prefix</label>" +
 										"<input type='text' class='form-control' value='" + director.Prefix + "' id='pre' style='width: 70px'>" +
 									"</div>" + 
@@ -143,6 +187,10 @@ $(document).ready(function(){
 						LastName: $("#last").val(),
 						Suffix: $("#suffix").val()
 					};
+		if(($("#image")[0]).files.length > 0){
+			director.Image = convertToBase64String(document.getElementById("imgView"));
+		}
+		director = handleNullDirectorEntries(movie.Director);
 		$.ajax({
 			type: "POST",
 			url: "https://localhost:44344/api/director",
@@ -159,8 +207,12 @@ $(document).ready(function(){
 						FirstName: $("#first").val(),
 						MiddleName: $("#middle").val(),
 						LastName: $("#last").val(),
-						Suffix: $("#suffix").val()
+						Suffix: $("#suffix").val(),
 					};
+		if(($("#image")[0]).files.length > 0){
+			director.Image = convertToBase64String(document.getElementById("imgView"));
+		}
+		director = handleNullDirectorEntries(movie.Director);
 		$.ajax({
 			type:"PUT",
 			url: "https://localhost:44344/api/director/" + $("#heading").html().split('#')[1].split(':')[0],
@@ -181,6 +233,10 @@ $(document).ready(function(){
 							  LastName: $("#last").val(),
 							  Suffix: $("#suffix").val()}
 	};
+			if(($("#image")[0]).files.length > 0){
+			movie.Image = convertToBase64String(document.getElementById("imgView"));
+		}
+	movie.Director = handleNullDirectorEntries(movie.Director);
 		$.ajax({
 			type: "POST",
 			url: "https://localhost:44344/api/movie",
@@ -192,6 +248,27 @@ $(document).ready(function(){
 			}
 		});
 	});
+	$(document).on("click", ".submitNewMovieForDirBtn", function(event){
+			let id = parseInt(event.target.id.split('n')[1]);
+			var movie = {Title: $("#title").val(),
+						Genre: $("#genre").val(),
+						Runtime: $("#runtime").val(),
+						DirectorId: id
+					};
+		if(($("#image")[0]).files.length > 0){
+			movie.Imagge = convertToBase64String(document.getElementById("imgView"));
+		}
+					$.ajax({
+						type: "POST",
+						url: "https://localhost:44344/api/movie",
+						dataType:"json",
+						data: movie,
+						success:function(){
+							console.log("successful post");
+							buildMovieTable(event,id);
+						}
+					});
+	});
 		$(document).on("click", "#submitEditedMovie", function(){
 		var movie = {Title: $("#title").val(),
 					Genre: $("#genre").val(),
@@ -201,7 +278,12 @@ $(document).ready(function(){
 							  MiddleName: $("#middle").val(),
 							  LastName: $("#last").val(),
 							  Suffix: $("#suffix").val()}
-	};
+					};			
+		if(($("#image")[0]).files.length > 0){
+			movie.Image = convertToBase64String(document.getElementById("imgView"));
+
+		}
+		movie.Director = handleNullDirectorEntries(movie.Director);
 		$.ajax({
 			type: "PUT",
 			url: "https://localhost:44344/api/movie/" + parseInt($("#titleLabel").html().split(' ')[2].split(')')[0]),
@@ -213,33 +295,44 @@ $(document).ready(function(){
 			}
 		});
 	});
-function buildMovieTable(){
+		$(document).on("click", ".dirFilmBtn", function(event){
+			id = parseInt(event.target.id.split('n')[1])
+			buildMovieTable(event, id);
+		})
+function buildMovieTable(event, dirId = 0){
 		$("#contentBody").html("<table id='contentTable' class='table-striped'><tbody id=tableBody><tr id='tableHead'></tr></tbody></table>");
 		$.get({
 			type: "GET",
 			url: "https://localhost:44344/api/movie",
 			dataType: "json",
 			success: function(movies){
-				$("#tableHead").append("<th>Title</th><th>Genre</th><th>Runtime</th><th>Director</th><th>Edit</th>");
+				$("#tableHead").append("<th></th><th>Title</th><th>Genre</th><th>Runtime(Min)</th><th>Director</th><th></th>");
 				for(let i = 0; i < movies.length; i++){
-					let directorName = "";
-					if(movies[i].Director.Prefix != null || movies[i].Director.Prefix != undefined)
-						directorName += (movies[i].Director.Prefix + " ");
-					if(movies[i].Director.FirstName != null || movies[i].Director.FirstName != undefined)
-						directorName += (movies[i].Director.FirstName+ " ");
-					if(movies[i].Director.MiddleName != null || movies[i].Director.MiddleName != undefined)
-						directorName += (movies[i].Director.MiddleName+ " ");
-					if(movies[i].Director.LastName != null || movies[i].Director.LastName != undefined)
-						directorName += (movies[i].Director.LastName+ " ");
-					if(movies[i].Director.Suffix != null || movies[i].Director.Suffix != undefined)
-						directorName += (movies[i].Director.Suffix+ " ");
-					$("#tableBody").append("<tr><td>" + movies[i].Title 
-						+ "</td><td>" + movies[i].Genre 
-						+ "</td><td>" + movies[i].Runtime
-						+ "</td><td>" + directorName
-						+ "</td><td><a class='editMovieBtn' id='editMovieBtn" + movies[i].Id + "' href = '#'>Edit</a></td></tr>");
+					if(dirId == 0 || dirId == movies[i].DirectorId){
+						let directorName = "";
+						if(movies[i].Director.Prefix != null && movies[i].Director.Prefix != undefined)
+							directorName += (movies[i].Director.Prefix + " ");
+						if(movies[i].Director.FirstName != null && movies[i].Director.FirstName != undefined)
+							directorName += (movies[i].Director.FirstName+ " ");
+						if(movies[i].Director.MiddleName != null && movies[i].Director.MiddleName != undefined)
+							directorName += (movies[i].Director.MiddleName+ " ");
+						if(movies[i].Director.LastName != null && movies[i].Director.LastName != undefined)
+							directorName += (movies[i].Director.LastName+ " ");
+						if(movies[i].Director.Suffix != null && movies[i].Director.Suffix != undefined)
+							directorName += (movies[i].Director.Suffix+ " ");
+						$("#tableBody").append("<tr><td>" + "<img id='imgView' width='300' height='450' src='data:image/png;base64" + movies[i].Image + "'>"
+							+ "</td><td>" + movies[i].Title 
+							+ "</td><td>" + movies[i].Genre 
+							+ "</td><td>" + movies[i].Runtime
+							+ "</td><td>" + directorName
+							+ "</td><td><a class='editMovieBtn' id='editMovieBtn" + movies[i].Id + "' href = '#'>Edit</a></td></tr>");
+					}
 				}
-				$("#tableBody").append("<tr><td></td><td></td><td></td><td></td><td><a id='createMovieBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
+				if(dirId == 0){
+					$("#tableBody").append("<tr><td></td><td></td><td></td><td></td><td></td><td><a id='createMovieBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
+				}else{
+					$("#tableBody").append("<tr><td></td><td></td><td></td><td></td><td></td><td><a class='createMovieForDirBtn' id='createMovieForDirBtn" + dirId + "' href='#' style='font-size: 24px'>+</a></td></tr>");
+				}
 			},
 			error: function(xhr, options, error){
 				console.log(error);
@@ -253,7 +346,7 @@ function buildDirectorTable(){
 			url: "https://localhost:44344/api/director",
 			dataType: "json",
 			success: function(directors){
-				$("#tableHead").append("<th>Name</th><th>Edit</th>");
+				$("#tableHead").append("<th>Name</th><th></th><th></th>");
 				for(let i = 0; i < directors.length; i++){
 					let directorName = "";
 					if(directors[i].Prefix != null || directors[i].Prefix != undefined)
@@ -266,12 +359,49 @@ function buildDirectorTable(){
 						directorName += (directors[i].LastName+ " ");
 					if(directors[i].Suffix != null || directors[i].Suffix != undefined)
 						directorName += (directors[i].Suffix+ " ");
-					$("#tableBody").append("<tr><td>" + directorName + " </td><td><a class='editDirBtn' id='editDirBtn" + directors[i].Id + "' href='#'>Edit</a></td></tr>");
+					$("#tableBody").append("<tr>" + 
+												"<td><img id='imgView' width='300' height='450' src='data:image/png;base64" + directors[i].Image + "'>" +
+												"<td>" + directorName + " </td>" + 
+												"<td><a class='dirFilmBtn' id='dirFilmBtn" + directors[i].Id + "' href='#'>Films</a></td>" +
+												"<td><a class='editDirBtn' id='editDirBtn" + directors[i].Id + "' href='#'>Edit</a></td>" +
+												"</tr>");
 				}
-				$("#tableBody").append("<tr><td></td><td><a id='createDirBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
+				$("#tableBody").append("<tr><td></td><td></td><td></td><td><a id='createDirBtn' href='#' style='font-size: 24px'>+</a></td></tr>");
 			},
 			error: function(xhr, options, error){
 				console.log(error);
 			}
 		});
+	}
+	function buildSearchFields(){
+
+	}
+	function convertToBase64String(img){
+		var canvas = document.getElementById('canvas');
+		var context = canvas.getContext("2d");
+		context.drawImage(img,0,0);
+		var dURL = canvas.toDataURL("image/png");
+		return dURL;
+	}
+	function imgChosen(event){
+		var file = event.target.files[0];
+		var fReader = new FileReader();
+		var imageEle = document.getElementById("imgView");
+		fReader.onload = function(event){
+			imageEle.src = event.target.result;
+		};
+		fReader.readAsDataURL(file);
+	}
+	function replaceNullStringWithUndefined(string){
+		if(string == "null")
+			return undefined;
+		return string;
+	}
+	function handleNullDirectorEntries(director){
+		director.Prefix = replaceNullStringWithUndefined(director.Prefix);
+		director.FirstName = replaceNullStringWithUndefined(director.FirstName);
+		director.MiddleName = replaceNullStringWithUndefined(director.MiddleName);
+		director.LastName = replaceNullStringWithUndefined(director.LastName);
+		director.Suffix = replaceNullStringWithUndefined(director.Suffix);
+		return director;
 	}

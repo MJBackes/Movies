@@ -27,32 +27,47 @@ namespace MovieLib.Controllers
         // GET api/values/5
         public IHttpActionResult Get(int id)
         {
-            Movie movie = db.Movies.Include("Director").FirstOrDefault(m => m.Id == id);
-            return Ok(movie);
+            return Ok(db.Movies.Include("Director").FirstOrDefault(m => m.Id == id));
         }
 
         // POST api/values
         public void Post([FromBody]Movie movie)
         {
             int directorId;
-            Director director = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.LastName == movie.Director.LastName && d.MiddleName == movie.Director.MiddleName && d.Suffix == movie.Director.Suffix && d.Prefix == movie.Director.Prefix);
-            if (director != null)
+            string imgString;
+            if (movie.Image != null)
             {
-                directorId = director.Id;
+                imgString = movie.Image; 
             }
             else
             {
-                director = new Director
+                imgString = PlaceholderString.PlaceholderStr;
+            }
+            if (movie.DirectorId != 0)
+            {
+                directorId = movie.DirectorId;
+            }
+            else
+            {
+                Director director = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.LastName == movie.Director.LastName && d.MiddleName == movie.Director.MiddleName && d.Suffix == movie.Director.Suffix && d.Prefix == movie.Director.Prefix);
+                if (director != null)
                 {
-                    FirstName = movie.Director.FirstName,
-                    MiddleName = movie.Director.MiddleName,
-                    LastName = movie.Director.LastName,
-                    Prefix = movie.Director.Prefix,
-                    Suffix = movie.Director.Suffix
-                };
-                db.Directors.Add(director);
-                db.SaveChanges();
-                directorId = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.MiddleName == movie.Director.MiddleName && d.LastName == movie.Director.LastName && d.Prefix == movie.Director.Prefix && d.Suffix == movie.Director.Suffix).Id;
+                    directorId = director.Id;
+                }
+                else
+                {
+                    director = new Director
+                    {
+                        FirstName = movie.Director.FirstName,
+                        MiddleName = movie.Director.MiddleName,
+                        LastName = movie.Director.LastName,
+                        Prefix = movie.Director.Prefix,
+                        Suffix = movie.Director.Suffix
+                    };
+                    db.Directors.Add(director);
+                    db.SaveChanges();
+                    directorId = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.MiddleName == movie.Director.MiddleName && d.LastName == movie.Director.LastName && d.Prefix == movie.Director.Prefix && d.Suffix == movie.Director.Suffix).Id;
+                }
             }
             db.Movies.Add(new Movie
             {
@@ -60,7 +75,8 @@ namespace MovieLib.Controllers
                 Genre = movie.Genre,
                 DirectorId = directorId,
                 Runtime = movie.Runtime,
-            });
+                Image = imgString
+        });
             db.SaveChanges();
         }
 
@@ -80,6 +96,8 @@ namespace MovieLib.Controllers
                 movieFromDb.DirectorId = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.MiddleName == movie.Director.MiddleName && d.LastName == movie.Director.LastName && d.Prefix == movie.Director.Prefix && d.Suffix == movie.Director.Suffix).Id;
             }
             movieFromDb.Runtime = movie.Runtime;
+            if(movie.Image != null)
+                movieFromDb.Image = movie.Image;
             db.SaveChanges();
         }
 
