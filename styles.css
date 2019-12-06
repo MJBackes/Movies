@@ -3,6 +3,14 @@
 	font-size: 25px;
 
 }
+img{
+	height: 300px;
+	width: 200px;
+}
+canvas{
+	height: 300px;
+	width:200px;
+}
 th{
 	padding: 15px;
 	text-align: center;

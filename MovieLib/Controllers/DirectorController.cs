@@ -38,16 +38,13 @@ namespace MovieLib.Controllers
         public void Put(int id, [FromBody]Director director)
         {
             Director directorFromDb = db.Directors.FirstOrDefault(d => d.Id == id);
-            if(director.FirstName != "null")
                 directorFromDb.FirstName = director.FirstName;
-            if (director.MiddleName != "null")
                 directorFromDb.MiddleName = director.MiddleName;
-            if (director.LastName != "null")
                 directorFromDb.LastName = director.LastName;
-            if (director.Prefix != "null")
                 directorFromDb.Prefix = director.Prefix;
-            if (director.Suffix != "null")
                 directorFromDb.Suffix = director.Suffix;
+            if (director.Image != null)
+                directorFromDb.Image = director.Image;
             db.SaveChanges();
         }
 

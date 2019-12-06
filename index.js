@@ -8,8 +8,8 @@ $(document).ready(function(){
 	$(document).on("click","#createMovieBtn",function(){
 		$("#contentBody").html("<form style='width: 100%'>" +
 									"<div class='form-group'>" +
-										"<canvas hidden id='canvas' width='300' height='450'></canvas>" + 
-										"<img id='imgView' width='300' height='450'>" + 
+										"<canvas hidden id='canvas'></canvas>" + 
+										"<img id='imgView'>" + 
 										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
 									"<div>" +
 									"<div class='form-group'>" +
@@ -48,8 +48,8 @@ $(document).ready(function(){
 			id = event.target.id.split('n')[1];
 		$("#contentBody").html("<form style='width: 100%'>" + 
 									"<div class='form-group'>" +
-										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
-										"<img id='imgView' width='300' height='450'>" + 
+										"<canvas hidden id='canvas'></canvas>" +
+										"<img id='imgView'>" + 
 										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
 									"<div>" +
 									"<div class='form-group'>" +
@@ -78,8 +78,8 @@ $(document).ready(function(){
 			success:function(movie){
 						$("#contentBody").html("<form style='width: 100%'>" +
 									"<div class='form-group'>" +
-										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
-										"<img id='imgView' width='300' height='450' src='data:image/png;base64" + movie.Image + "'>" +
+										"<canvas hidden id='canvas'></canvas>" +
+										"<img id='imgView' src='data:image/png;base64" + movie.Image + "'>" +
 										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
 									"<div>" +
 									"<div class='form-group'>" +
@@ -113,15 +113,16 @@ $(document).ready(function(){
 									"</div>" + 
 									"<button id='submitEditedMovie' class='btn btn-primary'>Submit</button>" +
 								"</form>");
-			}
-		})
+			},			
+			error: function(jqxhr, textStatus, errorThrown){console.log(textStatus, errorThrown)}
+		});
 	});
 	$(document).on("click", "#createDirBtn", function(){
 				$("#contentBody").html("<form style='width: 100%'>" +
 									"<h4>Director:</h4>" +
 									"<div class='form-group'>" +
-										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
-										"<img id='imgView' width='300' height='450'>" + 
+										"<canvas hidden id='canvas'></canvas>" +
+										"<img id='imgView'>" + 
 										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
 									"<div>" +
 									"<div class='form-group'>" +
@@ -155,8 +156,8 @@ $(document).ready(function(){
 										$("#contentBody").html("<form style='width: 100%'>" +
 									"<h4 id='heading'>Director #" + id + ":</h4>" +
 									"<div class='form-group'>" +
-										"<canvas hidden id='canvas' width='300' height='450'></canvas>" +
-										"<img id='imgView' width='300' height='450' src='data:image/png;base64" + director.Image + "'>" + 
+										"<canvas hidden id='canvas'></canvas>" +
+										"<img id='imgView' src='data:image/png;base64" + director.Image + "'>" + 
 										"<input type='file' onchange='imgChosen(event)' name='img' id='image'>" + 
 									"<div>" +
 									"<div class='form-group'>" +
@@ -177,6 +178,9 @@ $(document).ready(function(){
 									"</div>" + 
 									"<button id='submitEditedDirector' class='btn btn-primary'>Submit</button>" +
 								"</form>");
+			},			
+			error: function(xhr, options, error){
+				console.log(error);
 			}
 		});
 	});
@@ -199,6 +203,9 @@ $(document).ready(function(){
 			success:function(){
 				console.log("successful post");
 				buildDirectorTable();
+			},			
+			error: function(xhr, options, error){
+				console.log(error);
 			}
 		});
 	});
@@ -212,7 +219,7 @@ $(document).ready(function(){
 		if(($("#image")[0]).files.length > 0){
 			director.Image = convertToBase64String(document.getElementById("imgView"));
 		}
-		director = handleNullDirectorEntries(movie.Director);
+		director = handleNullDirectorEntries(director);
 		$.ajax({
 			type:"PUT",
 			url: "https://localhost:44344/api/director/" + $("#heading").html().split('#')[1].split(':')[0],
@@ -220,6 +227,9 @@ $(document).ready(function(){
 			success: function(){
 				console.log("successful put");
 				buildDirectorTable();
+			},			
+			error: function(xhr, options, error){
+				console.log(error);
 			}
 		});
 	});
@@ -245,6 +255,9 @@ $(document).ready(function(){
 			success:function(){
 				console.log("successful post");
 				buildMovieTable();
+			},			
+			error: function(xhr, options, error){
+				console.log(error);
 			}
 		});
 	});
@@ -266,7 +279,10 @@ $(document).ready(function(){
 						success:function(){
 							console.log("successful post");
 							buildMovieTable(event,id);
-						}
+						},
+						error: function(xhr, options, error){
+				console.log(error);
+			}
 					});
 	});
 		$(document).on("click", "#submitEditedMovie", function(){
@@ -292,6 +308,9 @@ $(document).ready(function(){
 			success:function(){
 				console.log("successful put");
 				buildMovieTable();
+			},
+			error: function(xhr, options, error){
+				console.log(error);
 			}
 		});
 	});
@@ -379,7 +398,7 @@ function buildDirectorTable(){
 	function convertToBase64String(img){
 		var canvas = document.getElementById('canvas');
 		var context = canvas.getContext("2d");
-		context.drawImage(img,0,0);
+		context.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,0,0,canvas.width,canvas.height);
 		var dURL = canvas.toDataURL("image/png");
 		return dURL;
 	}
