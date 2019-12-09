@@ -62,7 +62,8 @@ namespace MovieLib.Controllers
                         MiddleName = movie.Director.MiddleName,
                         LastName = movie.Director.LastName,
                         Prefix = movie.Director.Prefix,
-                        Suffix = movie.Director.Suffix
+                        Suffix = movie.Director.Suffix,
+                        Image = PlaceholderString.PlaceholderStr
                     };
                     db.Directors.Add(director);
                     db.SaveChanges();
@@ -91,7 +92,7 @@ namespace MovieLib.Controllers
                 movieFromDb.DirectorId = director.Id;
             else
             {
-                db.Directors.Add(new Director { FirstName = movie.Director.FirstName, MiddleName = movie.Director.MiddleName, LastName = movie.Director.LastName });
+                db.Directors.Add(new Director { FirstName = movie.Director.FirstName, MiddleName = movie.Director.MiddleName, LastName = movie.Director.LastName ,Image = PlaceholderString.PlaceholderStr});
                 db.SaveChanges();
                 movieFromDb.DirectorId = db.Directors.FirstOrDefault(d => d.FirstName == movie.Director.FirstName && d.MiddleName == movie.Director.MiddleName && d.LastName == movie.Director.LastName && d.Prefix == movie.Director.Prefix && d.Suffix == movie.Director.Suffix).Id;
             }

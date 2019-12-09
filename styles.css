@@ -3,6 +3,10 @@
 	font-size: 25px;
 
 }
+.searchBar{
+	position: absolute;
+	right: 5px;
+}
 img{
 	height: 300px;
 	width: 200px;

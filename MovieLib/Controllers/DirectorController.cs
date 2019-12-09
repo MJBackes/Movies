@@ -30,7 +30,7 @@ namespace MovieLib.Controllers
         // POST: api/Director
         public void Post([FromBody]Director director)
         {
-            db.Directors.Add(new Director { FirstName = director.FirstName, MiddleName = director.MiddleName, LastName = director.LastName, Suffix = director.Suffix, Prefix = director.Prefix });
+            db.Directors.Add(new Director { FirstName = director.FirstName, MiddleName = director.MiddleName, LastName = director.LastName, Suffix = director.Suffix, Prefix = director.Prefix, Image = PlaceholderString.PlaceholderStr });
             db.SaveChanges();
         }
 
